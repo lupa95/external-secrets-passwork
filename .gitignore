@@ -1,0 +1,20 @@
+# Binaries
+/proxy
+/bin/
+/out/
+
+# Go modules
+/go.mod
+/go.sum
+
+# IDE / editor files
+.vscode/
+.idea/
+*.swp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Docker files (ignore if you don't want to version dockerignore)
+Dockerfile
