@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -63,8 +64,21 @@ func main() {
 			return
 		}
 
+		// Convert to map to modify CryptedPassword
+		var data map[string]interface{}
+		jsonBytes, _ := json.Marshal(resp.Data)
+		json.Unmarshal(jsonBytes, &data)
+
+		// Decode CryptedPassword from base64
+		if cryptedPw, ok := data["CryptedPassword"].(string); ok && cryptedPw != "" {
+			decoded, err := base64.StdEncoding.DecodeString(cryptedPw)
+			if err == nil {
+				data["CryptedPassword"] = string(decoded)
+			}
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		if encErr := json.NewEncoder(w).Encode(resp.Data); encErr != nil {
+		if encErr := json.NewEncoder(w).Encode(data); encErr != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			_ = json.NewEncoder(w).Encode(jsonError{Error: "failed to encode response"})
 			log.Printf("encode error for secret %s: %v (took %s)", secretID, encErr, time.Since(start))
