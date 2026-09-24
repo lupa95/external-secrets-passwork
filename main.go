@@ -123,5 +123,13 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("shutdown failed: %v", err)
 	}
+
+	// Close the Passwork session.
+	if err := client.Logout(); err != nil {
+		log.Printf("passwork logout failed: %v", err)
+	} else {
+		log.Println("Passwork session closed")
+	}
+
 	log.Println("server stopped")
 }
